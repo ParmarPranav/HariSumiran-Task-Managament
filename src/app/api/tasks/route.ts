@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const projectId = searchParams.get('projectId');
+    const db = getDatabase();
 
     // 1. Attempt fetching from Supabase Cloud
     if (isSupabaseConfigured && supabase) {
@@ -16,9 +17,17 @@ export async function GET(request: Request) {
           query = query.eq('projectId', projectId);
         }
         const { data: cloudTasks, error } = await query;
+
+        // Case A: Cloud has tasks -> sync to disk and return
         if (!error && cloudTasks && cloudTasks.length > 0) {
           saveDatabase({ tasks: cloudTasks as Task[] });
           return NextResponse.json({ success: true, tasks: cloudTasks, source: 'supabase' });
+        }
+
+        // Case B: Cloud table is empty -> auto-seed from local database into Supabase
+        if (!error && cloudTasks && cloudTasks.length === 0 && db.tasks.length > 0) {
+          await supabase.from('tasks').upsert(db.tasks);
+          return NextResponse.json({ success: true, tasks: db.tasks, source: 'supabase_seeded' });
         }
       } catch (supabaseError) {
         console.warn('Supabase fetch failed, using local disk database:', supabaseError);
@@ -26,9 +35,7 @@ export async function GET(request: Request) {
     }
 
     // 2. Fallback to Local Disk Database (data/db.json)
-    const db = getDatabase();
     let tasks = db.tasks;
-
     if (projectId) {
       tasks = tasks.filter((t) => t.projectId === projectId);
     }
