@@ -1,0 +1,54 @@
+import { Project, Task, User } from '@/types';
+
+export const MOCK_USERS: User[] = [
+  {
+    id: 'usr-1',
+    name: 'HariSumiran Admin',
+    email: 'admin@harisumiran.io',
+    role: 'Lead',
+    initials: 'HA',
+    color: '#6366f1',
+  },
+];
+
+export const MOCK_PROJECTS: Project[] = [
+  {
+    id: 'proj-1',
+    name: 'HariSumiran',
+    slug: 'harisumiran',
+    description: 'HariSumiran project workspace',
+    icon: 'FolderKanban',
+    color: '#6366f1',
+    status: 'active',
+    isFavorite: true,
+    memberIds: ['usr-1'],
+    createdAt: '2026-08-01T08:00:00.000Z',
+  },
+];
+
+export const MOCK_TASKS: Task[] = [
+  {
+    id: 'task-1',
+    code: 'HS-101',
+    title: 'Add Gujarati language to HariSumiran app',
+    description: 'Implement Gujarati localization support across the HariSumiran workspace.',
+    status: 'done',
+    priority: 'high',
+    position: 0,
+    labels: [],
+    dueDate: '2026-10-25T18:00:00.000Z',
+    projectId: 'proj-1',
+    subtasks: [
+      {
+        id: 'sub-1-1',
+        title: 'Gujarati translation strings setup',
+        completed: true,
+        createdAt: '2026-08-23T10:00:00Z',
+      },
+    ],
+    comments: [],
+    attachments: [],
+    createdAt: '2026-08-23T09:00:00.000Z',
+    updatedAt: '2026-08-23T15:40:00.000Z',
+  },
+];
