@@ -3,7 +3,7 @@
     {
       "id": "task-1",
       "code": "HS-101",
-      "title": "Add Gujarati language to HariSumiran app",
+      "title": "Add Gujarati Language to HariSumiran Application !",
       "description": "Implement Gujarati localization support across the HariSumiran workspace.",
       "status": "done",
       "priority": "high",
@@ -22,7 +22,7 @@
       "comments": [],
       "attachments": [],
       "createdAt": "2026-08-23T09:00:00.000Z",
-      "updatedAt": "2026-08-23T15:40:00.000Z"
+      "updatedAt": "2026-08-23T16:43:09.488Z"
     }
   ],
   "projects": [
@@ -35,7 +35,9 @@
       "color": "#6366f1",
       "status": "active",
       "isFavorite": true,
-      "memberIds": ["usr-1"],
+      "memberIds": [
+        "usr-1"
+      ],
       "createdAt": "2026-08-01T08:00:00.000Z"
     }
   ],
@@ -49,5 +51,5 @@
       "color": "#6366f1"
     }
   ],
-  "lastUpdated": "2026-08-23T15:40:00.000Z"
+  "lastUpdated": "2026-08-23T16:43:09.488Z"
 }

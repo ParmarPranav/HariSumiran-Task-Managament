@@ -50,8 +50,9 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "monospace"],
+        sans: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
+        space: ["var(--font-space-grotesk)", "sans-serif"],
+        mono: ["var(--font-space-mono)", "monospace"],
       },
       keyframes: {
         "accordion-down": {
