@@ -50,7 +50,8 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["var(--font-space-grotesk)", "system-ui", "sans-serif"],
+        mirage: ["var(--font-made-mirage)", "var(--font-space-grotesk)", "serif"],
+        sans: ["var(--font-made-mirage)", "var(--font-space-grotesk)", "system-ui", "sans-serif"],
         space: ["var(--font-space-grotesk)", "sans-serif"],
         mono: ["var(--font-space-mono)", "monospace"],
       },
