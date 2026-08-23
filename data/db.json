@@ -8,9 +8,10 @@
       "status": "done",
       "priority": "high",
       "position": 0,
+      "assigneeId": null,
+      "assignee": null,
       "labels": [],
       "dueDate": "2026-10-25T18:00:00.000Z",
-      "projectId": "proj-1",
       "subtasks": [
         {
           "id": "sub-1-1",
@@ -21,6 +22,7 @@
       ],
       "comments": [],
       "attachments": [],
+      "projectId": "proj-1",
       "createdAt": "2026-08-23T09:00:00.000Z",
       "updatedAt": "2026-08-23T16:43:09.488Z"
     }
@@ -51,5 +53,5 @@
       "color": "#6366f1"
     }
   ],
-  "lastUpdated": "2026-08-23T16:43:09.488Z"
+  "lastUpdated": "2026-08-23T17:10:43.422Z"
 }
