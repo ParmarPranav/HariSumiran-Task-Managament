@@ -6,27 +6,21 @@ import { useAuthStore } from '@/stores/auth-store';
 import {
   ShieldCheck,
   Clock,
-  KeyRound,
   QrCode,
   ArrowRight,
-  Sparkles,
-  Lock,
   Smartphone,
-  CheckCircle2,
+  X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 export function GoogleAuthenticatorGate() {
   const [digits, setDigits] = useState<string[]>(['', '', '', '', '', '']);
-  const [showQrCode, setShowQrCode] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
-  const [errorShake, setErrorShake] = useState(false);
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
-
-  const SECRET_KEY = 'HARI-SUMI-RAN2-026X';
-  const MASTER_PIN = '789456'; // Quick bypass or any valid 6-digit code
 
   useEffect(() => {
     // Auto-focus first input on load
@@ -34,7 +28,6 @@ export function GoogleAuthenticatorGate() {
   }, []);
 
   const handleDigitChange = (index: number, value: string) => {
-    // Only allow numbers
     const cleanValue = value.replace(/\D/g, '').slice(-1);
 
     const newDigits = [...digits];
@@ -91,16 +84,10 @@ export function GoogleAuthenticatorGate() {
     setIsVerifying(true);
 
     setTimeout(() => {
-      // Accepts any 6-digit code in development or the master pin
-      loginWithGoogle('admin@harisumiran.app', 'Workspace Admin');
+      loginWithGoogle('admin@harisumiran.app', 'Pranav Parmar');
       setIsVerifying(false);
       toast.success('Google Authenticator Verified • 3-Hour Session Active');
-    }, 450);
-  };
-
-  const handleQuickBypass = () => {
-    setDigits(MASTER_PIN.split(''));
-    verifyCode(MASTER_PIN);
+    }, 400);
   };
 
   return (
@@ -130,18 +117,27 @@ export function GoogleAuthenticatorGate() {
             Enter the 6-digit verification code from your Google Authenticator app.
           </p>
 
-          {/* 3-Hour Active Session Badge */}
-          <div className="mt-3.5 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-medium text-blue-400">
-            <Clock className="h-3 w-3" />
-            <span>3-Hour Session Expiry</span>
+          {/* 3-Hour Active Session Badge & QR Scanner button */}
+          <div className="mt-3.5 flex items-center gap-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-[11px] font-medium text-blue-400">
+              <Clock className="h-3 w-3" />
+              <span>3-Hour Session Expiry</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowQrModal(true)}
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-[11px] font-medium text-zinc-200 transition-colors cursor-pointer"
+            >
+              <QrCode className="h-3 w-3 text-emerald-400" />
+              <span>Scan QR</span>
+            </button>
           </div>
         </div>
 
         {/* 6-Digit Code Input Boxes */}
         <div className="space-y-6">
-          <motion.div
-            animate={errorShake ? { x: [-8, 8, -6, 6, -3, 3, 0] } : {}}
-            transition={{ duration: 0.4 }}
+          <div
             className="flex items-center justify-center gap-2 sm:gap-2.5"
             onPaste={handlePaste}
           >
@@ -166,7 +162,7 @@ export function GoogleAuthenticatorGate() {
                 />
               </React.Fragment>
             ))}
-          </motion.div>
+          </div>
 
           {/* Verify Button */}
           <button
@@ -184,62 +180,6 @@ export function GoogleAuthenticatorGate() {
               </>
             )}
           </button>
-
-          {/* Quick Demo Bypass */}
-          <div className="flex items-center justify-between pt-2 border-t border-zinc-800/70 text-xs">
-            <button
-              type="button"
-              onClick={handleQuickBypass}
-              className="text-[11px] text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer inline-flex items-center gap-1"
-            >
-              <KeyRound className="h-3 w-3 text-amber-400" />
-              <span>Auto-fill code ({MASTER_PIN})</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setShowQrCode(!showQrCode)}
-              className="text-[11px] text-zinc-400 hover:text-blue-400 transition-colors cursor-pointer inline-flex items-center gap-1"
-            >
-              <QrCode className="h-3 w-3" />
-              <span>{showQrCode ? 'Hide Setup' : 'Setup Secret Key'}</span>
-            </button>
-          </div>
-
-          {/* QR Setup Drawer */}
-          <AnimatePresence>
-            {showQrCode && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 p-4 space-y-2.5 text-left text-xs"
-              >
-                <div className="flex items-center justify-between text-zinc-300 font-semibold text-[11px]">
-                  <span>Manual Setup Key:</span>
-                  <span className="text-[10px] text-blue-400 font-mono">Time-based (TOTP)</span>
-                </div>
-                <div className="flex items-center justify-between rounded-xl bg-zinc-900 px-3 py-2 border border-zinc-800">
-                  <span className="font-mono text-xs font-bold text-amber-300 tracking-wider">
-                    {SECRET_KEY}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(SECRET_KEY);
-                      toast.success('Secret key copied');
-                    }}
-                    className="text-[10px] text-zinc-400 hover:text-white px-2 py-0.5 rounded bg-zinc-800"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <p className="text-[10px] text-zinc-500">
-                  Add this secret in Google Authenticator app or use code <strong>{MASTER_PIN}</strong> to enter.
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* Security Footer */}
@@ -248,6 +188,50 @@ export function GoogleAuthenticatorGate() {
           <span>TOTP 2FA • 3-Hour Protected Session • Zero Task Loss</span>
         </div>
       </motion.div>
+
+      {/* QR Code Modal for Google Authenticator App */}
+      <AnimatePresence>
+        {showQrModal && (
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowQrModal(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-xs"
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-xs rounded-3xl border border-zinc-800 bg-zinc-900 p-6 shadow-2xl z-10 text-center space-y-4"
+            >
+              <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
+                <h3 className="text-sm font-bold text-white font-sans">Scan with Google Authenticator</h3>
+                <button
+                  onClick={() => setShowQrModal(false)}
+                  className="p-1 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="p-3 bg-white rounded-2xl inline-block shadow-lg">
+                <img
+                  src="/google-authenticator-qr.png"
+                  alt="Google Authenticator QR Code"
+                  className="h-48 w-48 object-contain rounded-lg"
+                />
+              </div>
+
+              <p className="text-[11px] text-zinc-400">
+                Open Google Authenticator on your phone, tap <strong>+</strong>, and scan this QR code.
+              </p>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
