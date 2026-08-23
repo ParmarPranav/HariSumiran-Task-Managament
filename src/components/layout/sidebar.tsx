@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useUIStore } from '@/stores/ui-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { ViewMode } from '@/types';
 import {
   Layers,
@@ -14,8 +15,11 @@ import {
   Search,
   Moon,
   Sun,
+  LogOut,
+  Clock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export function Sidebar() {
   const sidebarCollapsed = useUIStore((state) => state.sidebarCollapsed);
@@ -27,14 +31,44 @@ export function Sidebar() {
   const theme = useUIStore((state) => state.theme);
   const toggleTheme = useUIStore((state) => state.toggleTheme);
 
+  const user = useAuthStore((state) => state.user);
+  const sessionExpiresAt = useAuthStore((state) => state.sessionExpiresAt);
+  const logout = useAuthStore((state) => state.logout);
+
+  const [remainingTime, setRemainingTime] = useState<string>('3h 00m');
+
+  // Live remaining session ticker
+  useEffect(() => {
+    const updateTime = () => {
+      if (!sessionExpiresAt) return;
+      const diff = sessionExpiresAt - Date.now();
+      if (diff <= 0) {
+        setRemainingTime('Expired');
+      } else {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        setRemainingTime(`${hours}h ${mins.toString().padStart(2, '0')}m`);
+      }
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 60000);
+    return () => clearInterval(interval);
+  }, [sessionExpiresAt]);
+
   const navItems = [
     { mode: 'board' as ViewMode, label: 'Kanban Board', icon: Kanban },
     { mode: 'calendar' as ViewMode, label: 'Calendar Schedule', icon: Calendar },
   ];
 
+  const handleLogout = () => {
+    logout();
+    toast.info('Signed out of Google session');
+  };
+
   return (
     <motion.aside
-      animate={{ width: sidebarCollapsed ? 64 : 230 }}
+      animate={{ width: sidebarCollapsed ? 64 : 240 }}
       transition={{ type: 'spring', damping: 26, stiffness: 280 }}
       className="relative flex flex-col h-screen border-r border-border/60 bg-card select-none z-30 shrink-0 overflow-hidden"
     >
@@ -45,7 +79,7 @@ export function Sidebar() {
             <Layers className="h-4 w-4" />
           </div>
           {!sidebarCollapsed && (
-            <span className="text-xs font-bold tracking-tight text-foreground truncate">
+            <span className="text-xs font-bold tracking-tight text-foreground truncate font-sans">
               HariSumiran
             </span>
           )}
@@ -133,8 +167,43 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* Sidebar Footer: Theme & Expand button */}
-      <div className="p-2 border-t border-border/60 space-y-1">
+      {/* Sidebar Footer: Google Session Profile, Theme & Collapse */}
+      <div className="p-2.5 border-t border-border/60 space-y-2">
+        {/* Authenticated Google User Card */}
+        {user && (
+          <div className="flex items-center justify-between p-2 rounded-xl bg-zinc-100/70 dark:bg-zinc-800/50 border border-border/50">
+            <div className="flex items-center gap-2 min-w-0">
+              <div
+                className="h-6 w-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 shadow-2xs"
+                style={{ backgroundColor: user.color || '#4285F4' }}
+              >
+                {user.initials}
+              </div>
+              {!sidebarCollapsed && (
+                <div className="min-w-0 truncate">
+                  <div className="text-[11px] font-semibold text-foreground truncate">
+                    {user.name}
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                    <Clock className="h-2.5 w-2.5 text-blue-400" />
+                    <span>{remainingTime}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!sidebarCollapsed && (
+              <button
+                onClick={handleLogout}
+                className="p-1 rounded-lg text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                title="Sign out (End 3h Google Session)"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        )}
+
         {sidebarCollapsed && (
           <button
             onClick={toggleSidebar}
@@ -148,7 +217,7 @@ export function Sidebar() {
         <button
           onClick={toggleTheme}
           className={cn(
-            'flex items-center gap-2 px-2.5 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer',
+            'flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer',
             sidebarCollapsed ? 'w-full justify-center px-0' : 'w-full'
           )}
           title={`Toggle ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
