@@ -52,7 +52,26 @@
 @layer base {
   * {
     @apply border-border;
+    outline: none;
   }
+
+  /* Universal reset for browser blue focus outlines */
+  input,
+  textarea,
+  select,
+  button {
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus,
+  button:focus {
+    outline: none !important;
+    -webkit-focus-ring-color: transparent !important;
+  }
+
   body {
     @apply bg-background text-foreground antialiased selection:bg-zinc-800 selection:text-zinc-100 dark:selection:bg-zinc-200 dark:selection:text-zinc-900;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
