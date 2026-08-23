@@ -8,6 +8,7 @@ import { TaskPriority, TaskStatus } from '@/types';
 import { TaskSubtasks } from './task-subtasks';
 import { TaskComments } from './task-comments';
 import { TaskActivity } from './task-activity';
+import { TaskMedia } from './task-media';
 import {
   X,
   Copy,
@@ -26,7 +27,7 @@ export function TaskDetailSheet() {
   const duplicateTask = useTaskStore((state) => state.duplicateTask);
   const undoLastAction = useTaskStore((state) => state.undoLastAction);
 
-  const [activeTab, setActiveTab] = useState<'subtasks' | 'comments' | 'activity'>('subtasks');
+  const [activeTab, setActiveTab] = useState<'subtasks' | 'media' | 'comments' | 'activity'>('subtasks');
 
   const task = tasks.find((t) => t.id === selectedTaskId);
 
@@ -61,6 +62,8 @@ export function TaskDetailSheet() {
   };
 
   if (!task) return null;
+
+  const attachmentsCount = task.attachments ? task.attachments.length : 0;
 
   return (
     <AnimatePresence>
@@ -209,18 +212,19 @@ export function TaskDetailSheet() {
               />
             </div>
 
-            {/* Tabbed Subsections: Subtasks | Comments | Activity */}
+            {/* Tabbed Subsections: Subtasks | Media | Comments | Activity */}
             <div className="pt-2 border-t border-border">
-              <div className="flex items-center gap-1 mb-4 border-b border-border/60 pb-1">
+              <div className="flex items-center gap-1 mb-4 border-b border-border/60 pb-1 overflow-x-auto">
                 {[
-                  { id: 'subtasks', label: `Subtasks (${task.subtasks.length})` },
-                  { id: 'comments', label: `Comments (${task.comments.length})` },
+                  { id: 'subtasks', label: `Subtasks (${task.subtasks ? task.subtasks.length : 0})` },
+                  { id: 'media', label: `Media (${attachmentsCount})` },
+                  { id: 'comments', label: `Comments (${task.comments ? task.comments.length : 0})` },
                   { id: 'activity', label: 'Activity' },
                 ].map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'bg-zinc-100 dark:bg-zinc-800 text-foreground shadow-2xs font-semibold'
                         : 'text-muted-foreground hover:text-foreground'
@@ -232,10 +236,13 @@ export function TaskDetailSheet() {
               </div>
 
               {activeTab === 'subtasks' && (
-                <TaskSubtasks taskId={task.id} subtasks={task.subtasks} />
+                <TaskSubtasks taskId={task.id} subtasks={task.subtasks || []} />
+              )}
+              {activeTab === 'media' && (
+                <TaskMedia taskId={task.id} attachments={task.attachments || []} />
               )}
               {activeTab === 'comments' && (
-                <TaskComments taskId={task.id} comments={task.comments} />
+                <TaskComments taskId={task.id} comments={task.comments || []} />
               )}
               {activeTab === 'activity' && <TaskActivity task={task} />}
             </div>
