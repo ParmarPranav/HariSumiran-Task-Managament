@@ -128,14 +128,24 @@ export async function PATCH(request: Request) {
       );
     }
 
+    let found = false;
     const updatedTasks = db.tasks.map((task) => {
       if (task.id !== id) return task;
+      found = true;
       return {
         ...task,
         ...updates,
-        updatedAt: new Date().toISOString(),
+        updatedAt: updates.updatedAt || new Date().toISOString(),
       };
     });
+
+    if (!found) {
+      updatedTasks.push({
+        id,
+        ...updates,
+        updatedAt: updates.updatedAt || new Date().toISOString(),
+      } as Task);
+    }
 
     saveDatabase({ tasks: updatedTasks });
     const updatedTask = updatedTasks.find((t) => t.id === id);

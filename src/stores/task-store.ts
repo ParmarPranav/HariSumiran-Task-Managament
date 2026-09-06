@@ -81,28 +81,50 @@ export const useTaskStore = create<TaskStore>()(
             const data = await res.json();
             if (data.success && Array.isArray(data.tasks)) {
               const localTasks = get().tasks || [];
-              const merged = data.tasks.map((serverTask: Task) => {
-                const local = localTasks.find((lt) => lt.id === serverTask.id);
-                if (local) {
-                  const serverAtts = serverTask.attachments || [];
-                  const localAtts = local.attachments || [];
-                  const finalAtts = localAtts.length >= serverAtts.length ? localAtts : serverAtts;
+              const mergedMap = new Map<string, Task>();
 
-                  return {
-                    ...serverTask,
-                    attachments: finalAtts,
-                    timeSpentSeconds: local.timeSpentSeconds ?? serverTask.timeSpentSeconds,
-                    inProgressStartedAt: local.inProgressStartedAt ?? serverTask.inProgressStartedAt,
-                    isTimerRunning: local.isTimerRunning ?? serverTask.isTimerRunning,
-                  };
-                }
-                return serverTask;
+              // Populate from server first
+              data.tasks.forEach((st: Task) => {
+                mergedMap.set(st.id, st);
               });
 
-              const serverIds = new Set(data.tasks.map((st: Task) => st.id));
-              const localOnly = localTasks.filter((lt) => !serverIds.has(lt.id));
+              // Merge with local tasks: keep local task if local is newer or updated in browser
+              localTasks.forEach((lt: Task) => {
+                const server = mergedMap.get(lt.id);
+                if (!server) {
+                  mergedMap.set(lt.id, lt);
+                } else {
+                  const localTime = new Date(lt.updatedAt || 0).getTime();
+                  const serverTime = new Date(server.updatedAt || 0).getTime();
 
-              set({ tasks: [...merged, ...localOnly] });
+                  if (localTime >= serverTime) {
+                    const serverAtts = server.attachments || [];
+                    const localAtts = lt.attachments || [];
+                    const finalAtts = localAtts.length >= serverAtts.length ? localAtts : serverAtts;
+
+                    mergedMap.set(lt.id, {
+                      ...server,
+                      ...lt,
+                      attachments: finalAtts,
+                    });
+                  } else {
+                    const serverAtts = server.attachments || [];
+                    const localAtts = lt.attachments || [];
+                    const finalAtts = localAtts.length >= serverAtts.length ? localAtts : serverAtts;
+
+                    mergedMap.set(lt.id, {
+                      ...lt,
+                      ...server,
+                      attachments: finalAtts,
+                      timeSpentSeconds: lt.timeSpentSeconds ?? server.timeSpentSeconds,
+                      inProgressStartedAt: lt.inProgressStartedAt ?? server.inProgressStartedAt,
+                      isTimerRunning: lt.isTimerRunning ?? server.isTimerRunning,
+                    });
+                  }
+                }
+              });
+
+              set({ tasks: Array.from(mergedMap.values()) });
             }
           }
         } catch (err) {
