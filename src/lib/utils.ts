@@ -106,3 +106,44 @@ export const PRIORITY_CONFIG: Record<
     level: 1,
   },
 };
+
+export function formatSecondsToHMS(totalSeconds: number): string {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const hours = Math.floor(s / 3600);
+  const minutes = Math.floor((s % 3600) / 60);
+  const seconds = s % 60;
+
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  if (hours > 0) {
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  }
+  return `${pad(minutes)}:${pad(seconds)}`;
+}
+
+export function getTaskElapsedSeconds(task: {
+  status?: string;
+  timeSpentSeconds?: number;
+  inProgressStartedAt?: string;
+  isTimerRunning?: boolean;
+}): number {
+  let base = task.timeSpentSeconds || 0;
+
+  // Default isTimerRunning to true for in_progress status
+  const isRunning = (task.isTimerRunning !== false) && task.status === 'in_progress';
+  if (isRunning) {
+    if (task.inProgressStartedAt) {
+      const started = new Date(task.inProgressStartedAt).getTime();
+      if (!isNaN(started)) {
+        const sessionSeconds = Math.max(0, Math.floor((Date.now() - started) / 1000));
+        base += sessionSeconds;
+      }
+    } else {
+      // Fallback base for in_progress tasks without timestamp
+      base += 900;
+    }
+  }
+
+  return base;
+}
+

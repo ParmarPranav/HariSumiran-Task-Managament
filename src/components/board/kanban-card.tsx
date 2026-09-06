@@ -5,6 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Task } from '@/types';
 import { TaskPriorityBadge } from '@/components/task/task-priority-badge';
+import { TaskTimerBadge } from '@/components/task/task-timer-badge';
 import { formatDate, cn } from '@/lib/utils';
 import { useUIStore } from '@/stores/ui-store';
 import { Calendar, CheckSquare, Image as ImageIcon, Paperclip } from 'lucide-react';
@@ -78,6 +79,21 @@ export function KanbanCard({ task }: KanbanCardProps) {
       <h4 className="text-xs sm:text-sm font-medium tracking-tight text-foreground line-clamp-2 leading-snug">
         {task.title}
       </h4>
+
+      {/* Live Timer for IN PROGRESS tickets */}
+      {task.status === 'in_progress' ? (
+        <div className="mt-2.5 flex items-center justify-between bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 rounded-lg px-2.5 py-1 text-xs">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+            Timer Active
+          </span>
+          <TaskTimerBadge task={task} size="sm" showControls={true} />
+        </div>
+      ) : task.timeSpentSeconds && task.timeSpentSeconds > 0 ? (
+        <div className="mt-2 flex items-center justify-between text-[11px] text-muted-foreground px-1">
+          <span className="text-[10px] font-medium text-zinc-500">Time Spent</span>
+          <TaskTimerBadge task={task} size="sm" showControls={false} />
+        </div>
+      ) : null}
 
       {/* Card Footer: Due Date, Subtask Count & Media Count */}
       <div className="flex items-center justify-between gap-2 mt-2.5 pt-2 border-t border-border/40 text-[11px] text-muted-foreground">

@@ -72,6 +72,9 @@ export interface Task {
   projectId: string;
   createdAt: string;
   updatedAt: string;
+  timeSpentSeconds?: number;
+  inProgressStartedAt?: string;
+  isTimerRunning?: boolean;
 }
 
 export interface Project {

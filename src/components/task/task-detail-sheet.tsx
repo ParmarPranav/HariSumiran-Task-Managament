@@ -9,12 +9,14 @@ import { TaskSubtasks } from './task-subtasks';
 import { TaskComments } from './task-comments';
 import { TaskActivity } from './task-activity';
 import { TaskMedia } from './task-media';
+import { TaskTimerBadge } from './task-timer-badge';
 import {
   X,
   Copy,
   Trash2,
   Share2,
   FileText,
+  Timer,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -142,6 +144,26 @@ export function TaskDetailSheet() {
                 className="w-full text-lg sm:text-xl font-bold tracking-tight bg-transparent text-foreground placeholder:text-muted-foreground/60 focus:outline-hidden resize-none border-b border-transparent focus:border-border pb-1"
                 placeholder="Task title..."
               />
+            </div>
+
+            {/* Live Active Timer Section */}
+            <div className="flex items-center justify-between p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-xs shadow-2xs">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-lg bg-amber-500/20 text-amber-500">
+                  <Timer className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="font-bold text-foreground text-xs">
+                    {task.status === 'in_progress' ? 'Active Work Timer' : 'Logged Time'}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">
+                    {task.status === 'in_progress'
+                      ? 'Live stopwatch tracking ticket duration'
+                      : 'Accumulated time spent on this ticket'}
+                  </div>
+                </div>
+              </div>
+              <TaskTimerBadge task={task} size="md" showControls={true} />
             </div>
 
             {/* Properties Matrix (Status, Priority, Due Date) */}

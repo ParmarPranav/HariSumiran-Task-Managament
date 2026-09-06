@@ -28,6 +28,7 @@ interface TaskStore {
   updateTask: (taskId: string, updates: Partial<Task>) => void;
   deleteTask: (taskId: string) => Task | undefined;
   duplicateTask: (taskId: string) => Task | undefined;
+  toggleTaskTimer: (taskId: string) => void;
 
   // Drag & drop moves
   moveTask: (taskId: string, targetStatus: TaskStatus, newPosition?: number) => void;
@@ -154,9 +155,32 @@ export const useTaskStore = create<TaskStore>()(
                 : undefined;
             }
 
+            let timerFields: Partial<Task> = {};
+            if (updates.status && updates.status !== task.status) {
+              if (updates.status === 'in_progress') {
+                timerFields = {
+                  inProgressStartedAt: task.inProgressStartedAt || now,
+                  isTimerRunning: true,
+                };
+              } else if (task.status === 'in_progress') {
+                let elapsed = task.timeSpentSeconds || 0;
+                if (task.inProgressStartedAt) {
+                  const started = new Date(task.inProgressStartedAt).getTime();
+                  if (!isNaN(started)) {
+                    elapsed += Math.max(0, Math.floor((Date.now() - started) / 1000));
+                  }
+                }
+                timerFields = {
+                  timeSpentSeconds: elapsed,
+                  isTimerRunning: false,
+                };
+              }
+            }
+
             updatedItem = {
               ...task,
               ...updates,
+              ...timerFields,
               assignee: updatedAssignee,
               updatedAt: now,
             };
@@ -231,8 +255,31 @@ export const useTaskStore = create<TaskStore>()(
             ? Math.max(0, Math.min(newPosition, targetColumnTasks.length))
             : targetColumnTasks.length;
 
+        let timerFields: Partial<Task> = {};
+        if (previousStatus !== targetStatus) {
+          if (targetStatus === 'in_progress') {
+            timerFields = {
+              inProgressStartedAt: currentTask.inProgressStartedAt || new Date().toISOString(),
+              isTimerRunning: true,
+            };
+          } else if (previousStatus === 'in_progress') {
+            let elapsed = currentTask.timeSpentSeconds || 0;
+            if (currentTask.inProgressStartedAt) {
+              const started = new Date(currentTask.inProgressStartedAt).getTime();
+              if (!isNaN(started)) {
+                elapsed += Math.max(0, Math.floor((Date.now() - started) / 1000));
+              }
+            }
+            timerFields = {
+              timeSpentSeconds: elapsed,
+              isTimerRunning: false,
+            };
+          }
+        }
+
         targetColumnTasks.splice(targetPos, 0, {
           ...currentTask,
+          ...timerFields,
           status: targetStatus,
           updatedAt: new Date().toISOString(),
         });
@@ -293,6 +340,33 @@ export const useTaskStore = create<TaskStore>()(
 
         set({ tasks: updatedAll });
         syncTaskToBackend('PATCH', { tasks: updatedAll });
+      },
+
+      toggleTaskTimer: (taskId) => {
+        const task = get().tasks.find((t) => t.id === taskId);
+        if (!task) return;
+
+        const now = new Date().toISOString();
+        const currentlyRunning = (task.isTimerRunning !== false) && task.status === 'in_progress';
+
+        if (currentlyRunning) {
+          let elapsed = task.timeSpentSeconds || 0;
+          if (task.inProgressStartedAt) {
+            const started = new Date(task.inProgressStartedAt).getTime();
+            if (!isNaN(started)) {
+              elapsed += Math.max(0, Math.floor((Date.now() - started) / 1000));
+            }
+          }
+          get().updateTask(taskId, {
+            timeSpentSeconds: elapsed,
+            isTimerRunning: false,
+          });
+        } else {
+          get().updateTask(taskId, {
+            inProgressStartedAt: now,
+            isTimerRunning: true,
+          });
+        }
       },
 
       addSubtask: (taskId, title) => {

@@ -26,6 +26,10 @@ export const MOCK_PROJECTS: Project[] = [
   },
 ];
 
+const nowMs = Date.now();
+const t24mAgo = new Date(nowMs - 24 * 60 * 1000).toISOString();
+const t1h12mAgo = new Date(nowMs - (72 * 60 + 15) * 1000).toISOString();
+
 export const MOCK_TASKS: Task[] = [
   {
     id: 'task-1',
@@ -50,5 +54,44 @@ export const MOCK_TASKS: Task[] = [
     attachments: [],
     createdAt: '2026-08-23T09:00:00.000Z',
     updatedAt: '2026-08-23T15:40:00.000Z',
+    timeSpentSeconds: 4320, // 1h 12m
+  },
+  {
+    id: 'task-2',
+    code: 'HS-102',
+    title: 'HariSumiran Admin Dashboard !',
+    description: 'Core dashboard module for admin management and workspace metrics.',
+    status: 'in_progress',
+    priority: 'medium',
+    position: 0,
+    labels: [],
+    projectId: 'proj-1',
+    subtasks: [],
+    comments: [],
+    attachments: [],
+    createdAt: '2026-09-06T10:00:00.000Z',
+    updatedAt: '2026-09-06T12:00:00.000Z',
+    timeSpentSeconds: 650,
+    inProgressStartedAt: t24mAgo,
+    isTimerRunning: true,
+  },
+  {
+    id: 'task-3',
+    code: 'HS-103',
+    title: 'HariSumiran Mobile Application',
+    description: 'Cross-platform mobile app client for HariSumiran task & sprint tracking.',
+    status: 'in_progress',
+    priority: 'medium',
+    position: 1,
+    labels: [],
+    projectId: 'proj-1',
+    subtasks: [],
+    comments: [],
+    attachments: [],
+    createdAt: '2026-09-06T11:00:00.000Z',
+    updatedAt: '2026-09-06T13:00:00.000Z',
+    timeSpentSeconds: 1200,
+    inProgressStartedAt: t1h12mAgo,
+    isTimerRunning: true,
   },
 ];

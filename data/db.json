@@ -24,7 +24,52 @@
       "attachments": [],
       "projectId": "proj-1",
       "createdAt": "2026-08-23T09:00:00.000Z",
-      "updatedAt": "2026-08-23T16:43:09.488Z"
+      "updatedAt": "2026-08-23T16:43:09.488Z",
+      "timeSpentSeconds": 4320
+    },
+    {
+      "id": "task-2",
+      "code": "HS-102",
+      "title": "HariSumiran Admin Dashboard !",
+      "description": "Core dashboard module for admin management and workspace metrics.",
+      "status": "in_progress",
+      "priority": "medium",
+      "position": 0,
+      "assigneeId": null,
+      "assignee": null,
+      "labels": [],
+      "dueDate": null,
+      "subtasks": [],
+      "comments": [],
+      "attachments": [],
+      "projectId": "proj-1",
+      "createdAt": "2026-09-06T10:00:00.000Z",
+      "updatedAt": "2026-09-06T12:00:00.000Z",
+      "timeSpentSeconds": 650,
+      "inProgressStartedAt": "2026-09-06T23:15:00.000Z",
+      "isTimerRunning": true
+    },
+    {
+      "id": "task-3",
+      "code": "HS-103",
+      "title": "HariSumiran Mobile Application",
+      "description": "Cross-platform mobile app client for HariSumiran task & sprint tracking.",
+      "status": "in_progress",
+      "priority": "medium",
+      "position": 1,
+      "assigneeId": null,
+      "assignee": null,
+      "labels": [],
+      "dueDate": null,
+      "subtasks": [],
+      "comments": [],
+      "attachments": [],
+      "projectId": "proj-1",
+      "createdAt": "2026-09-06T11:00:00.000Z",
+      "updatedAt": "2026-09-06T13:00:00.000Z",
+      "timeSpentSeconds": 1200,
+      "inProgressStartedAt": "2026-09-06T22:28:00.000Z",
+      "isTimerRunning": true
     }
   ],
   "projects": [
@@ -53,5 +98,5 @@
       "color": "#6366f1"
     }
   ],
-  "lastUpdated": "2026-08-23T17:10:43.422Z"
+  "lastUpdated": "2026-09-06T23:44:00.000Z"
 }
