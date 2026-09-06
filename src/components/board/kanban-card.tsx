@@ -76,7 +76,7 @@ export function KanbanCard({ task }: KanbanCardProps) {
       </div>
 
       {/* Task Title */}
-      <h4 className="text-xs sm:text-sm font-medium tracking-tight text-foreground line-clamp-2 leading-snug">
+      <h4 className="text-xs sm:text-sm font-medium tracking-tight text-foreground line-clamp-3 leading-snug whitespace-pre-line break-words">
         {task.title}
       </h4>
 

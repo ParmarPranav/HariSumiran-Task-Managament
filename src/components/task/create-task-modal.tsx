@@ -78,13 +78,19 @@ export function CreateTaskModal() {
           <form onSubmit={handleSubmit} className="space-y-3.5">
             {/* Title */}
             <div>
-              <input
-                type="text"
+              <textarea
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="What needs to be done?"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
+                placeholder="What needs to be done? (Shift+Enter for new line)"
                 autoFocus
-                className="w-full text-sm font-medium bg-transparent text-foreground placeholder:text-muted-foreground/60 border-b border-border/80 pb-2 focus:outline-none focus:ring-0 focus:border-zinc-400"
+                rows={1}
+                className="w-full text-sm font-medium bg-transparent text-foreground placeholder:text-muted-foreground/60 border-b border-border/80 pb-1.5 focus:outline-none focus:ring-0 focus:border-zinc-400 resize-none whitespace-pre-wrap leading-snug"
                 style={{ outline: 'none', boxShadow: 'none' }}
               />
             </div>

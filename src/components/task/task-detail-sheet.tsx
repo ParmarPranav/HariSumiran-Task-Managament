@@ -136,13 +136,22 @@ export function TaskDetailSheet() {
 
           {/* Main Content */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
-            {/* Title (Inline Editable) */}
+            {/* Title (Inline Editable - Auto-expanding multiline) */}
             <div>
               <textarea
+                ref={(el) => {
+                  if (el) {
+                    el.style.height = 'auto';
+                    el.style.height = `${Math.max(36, el.scrollHeight)}px`;
+                  }
+                }}
                 value={task.title}
-                onChange={(e) => updateTask(task.id, { title: e.target.value })}
-                rows={1}
-                className="w-full text-lg sm:text-xl font-bold tracking-tight bg-transparent text-foreground placeholder:text-muted-foreground/60 focus:outline-hidden resize-none border-b border-transparent focus:border-border pb-1"
+                onChange={(e) => {
+                  updateTask(task.id, { title: e.target.value });
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${Math.max(36, e.target.scrollHeight)}px`;
+                }}
+                className="w-full text-lg sm:text-xl font-bold tracking-tight bg-transparent text-foreground placeholder:text-muted-foreground/60 focus:outline-hidden resize-none border-b border-transparent focus:border-border pb-1 leading-snug whitespace-pre-wrap break-words overflow-hidden"
                 placeholder="Task title..."
               />
             </div>
