@@ -17,6 +17,56 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
+function compressImageFile(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement('canvas');
+      const maxDim = 1200;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+        resolve(dataUrl);
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.readAsDataURL(file);
+      }
+    };
+    img.onerror = () => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
+
 interface TaskMediaProps {
   taskId: string;
   attachments: Attachment[];
@@ -32,31 +82,36 @@ export function TaskMedia({ taskId, attachments = [] }: TaskMediaProps) {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64Url = event.target?.result as string;
+  const processFiles = async (filesList: File[]) => {
+    let currentAttachments = [...attachments];
+    for (const file of filesList) {
+      try {
+        const base64Url = await compressImageFile(file);
         const newAttachment: Attachment = {
           id: `att-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
           name: file.name,
-          size: `${(file.size / 1024).toFixed(1)} KB`,
-          type: file.type || 'image/png',
+          size: `${(base64Url.length / 1024).toFixed(1)} KB`,
+          type: file.type || 'image/jpeg',
           url: base64Url,
           uploadedAt: new Date().toISOString(),
         };
 
+        currentAttachments = [...currentAttachments, newAttachment];
         updateTask(taskId, {
-          attachments: [...attachments, newAttachment],
+          attachments: currentAttachments,
         });
-        toast.success(`Uploaded ${file.name}`);
-      };
-      reader.readAsDataURL(file);
-    });
+        toast.success(`Attached ${file.name}`);
+      } catch (err) {
+        console.error('File process error:', err);
+        toast.error(`Failed to attach ${file.name}`);
+      }
+    }
+  };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    processFiles(Array.from(files));
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -95,27 +150,7 @@ export function TaskMedia({ taskId, attachments = [] }: TaskMediaProps) {
     setIsDragging(false);
     const files = e.dataTransfer.files;
     if (!files || files.length === 0) return;
-
-    Array.from(files).forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const base64Url = event.target?.result as string;
-        const newAttachment: Attachment = {
-          id: `att-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-          name: file.name,
-          size: `${(file.size / 1024).toFixed(1)} KB`,
-          type: file.type || 'image/png',
-          url: base64Url,
-          uploadedAt: new Date().toISOString(),
-        };
-
-        updateTask(taskId, {
-          attachments: [...attachments, newAttachment],
-        });
-        toast.success(`Uploaded ${file.name}`);
-      };
-      reader.readAsDataURL(file);
-    });
+    processFiles(Array.from(files));
   };
 
   const isImage = (type: string, url: string) => {

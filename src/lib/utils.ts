@@ -147,3 +147,31 @@ export function getTaskElapsedSeconds(task: {
   return base;
 }
 
+export function parseHMSToSeconds(timeStr: string): number {
+  if (!timeStr || !timeStr.trim()) return 0;
+  const clean = timeStr.trim();
+
+  let total = 0;
+  const hMatch = clean.match(/(\d+)\s*h/i);
+  const mMatch = clean.match(/(\d+)\s*m/i);
+  const sMatch = clean.match(/(\d+)\s*s/i);
+
+  if (hMatch || mMatch || sMatch) {
+    if (hMatch) total += parseInt(hMatch[1], 10) * 3600;
+    if (mMatch) total += parseInt(mMatch[1], 10) * 60;
+    if (sMatch) total += parseInt(sMatch[1], 10);
+    return total;
+  }
+
+  const parts = clean.split(':').map((p) => parseInt(p, 10)).filter((n) => !isNaN(n));
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  } else if (parts.length === 2) {
+    return parts[0] * 60 + parts[1];
+  } else if (parts.length === 1) {
+    return parts[0] * 60;
+  }
+
+  return 0;
+}
+

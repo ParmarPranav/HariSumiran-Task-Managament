@@ -80,7 +80,29 @@ export const useTaskStore = create<TaskStore>()(
           if (res.ok) {
             const data = await res.json();
             if (data.success && Array.isArray(data.tasks)) {
-              set({ tasks: data.tasks });
+              const localTasks = get().tasks || [];
+              const merged = data.tasks.map((serverTask: Task) => {
+                const local = localTasks.find((lt) => lt.id === serverTask.id);
+                if (local) {
+                  const serverAtts = serverTask.attachments || [];
+                  const localAtts = local.attachments || [];
+                  const finalAtts = localAtts.length >= serverAtts.length ? localAtts : serverAtts;
+
+                  return {
+                    ...serverTask,
+                    attachments: finalAtts,
+                    timeSpentSeconds: local.timeSpentSeconds ?? serverTask.timeSpentSeconds,
+                    inProgressStartedAt: local.inProgressStartedAt ?? serverTask.inProgressStartedAt,
+                    isTimerRunning: local.isTimerRunning ?? serverTask.isTimerRunning,
+                  };
+                }
+                return serverTask;
+              });
+
+              const serverIds = new Set(data.tasks.map((st: Task) => st.id));
+              const localOnly = localTasks.filter((lt) => !serverIds.has(lt.id));
+
+              set({ tasks: [...merged, ...localOnly] });
             }
           }
         } catch (err) {

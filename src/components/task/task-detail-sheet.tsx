@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useUIStore } from '@/stores/ui-store';
 import { useTaskStore } from '@/stores/task-store';
 import { TaskPriority, TaskStatus } from '@/types';
+import { getTaskElapsedSeconds } from '@/lib/utils';
 import { TaskSubtasks } from './task-subtasks';
 import { TaskComments } from './task-comments';
 import { TaskActivity } from './task-activity';
@@ -146,24 +147,84 @@ export function TaskDetailSheet() {
               />
             </div>
 
-            {/* Live Active Timer Section */}
-            <div className="flex items-center justify-between p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-xs shadow-2xs">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-lg bg-amber-500/20 text-amber-500">
-                  <Timer className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="font-bold text-foreground text-xs">
-                    {task.status === 'in_progress' ? 'Active Work Timer' : 'Logged Time'}
+            {/* Live Active Timer Section with Edit & Quick Adjustments */}
+            <div className="p-3.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/25 text-xs shadow-2xs space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 rounded-lg bg-amber-500/20 text-amber-500">
+                    <Timer className="h-4 w-4" />
                   </div>
-                  <div className="text-[11px] text-muted-foreground">
-                    {task.status === 'in_progress'
-                      ? 'Live stopwatch tracking ticket duration'
-                      : 'Accumulated time spent on this ticket'}
+                  <div>
+                    <div className="font-bold text-foreground text-xs">
+                      {task.status === 'in_progress' ? 'Active Work Timer' : 'Logged Time'}
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      Click timer to edit time manually (e.g. 01:30:00)
+                    </div>
                   </div>
                 </div>
+                <TaskTimerBadge task={task} size="md" showControls={true} allowEdit={true} />
               </div>
-              <TaskTimerBadge task={task} size="md" showControls={true} />
+
+              {/* Quick Time Additions */}
+              <div className="flex items-center gap-1.5 pt-2 border-t border-amber-500/20 text-[11px]">
+                <span className="text-muted-foreground mr-1">Quick Add:</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = getTaskElapsedSeconds(task);
+                    updateTask(task.id, {
+                      timeSpentSeconds: current + 900,
+                      inProgressStartedAt: new Date().toISOString(),
+                    });
+                    toast.success('+15m added');
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors font-mono font-medium cursor-pointer"
+                >
+                  +15m
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = getTaskElapsedSeconds(task);
+                    updateTask(task.id, {
+                      timeSpentSeconds: current + 1800,
+                      inProgressStartedAt: new Date().toISOString(),
+                    });
+                    toast.success('+30m added');
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors font-mono font-medium cursor-pointer"
+                >
+                  +30m
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = getTaskElapsedSeconds(task);
+                    updateTask(task.id, {
+                      timeSpentSeconds: current + 3600,
+                      inProgressStartedAt: new Date().toISOString(),
+                    });
+                    toast.success('+1h added');
+                  }}
+                  className="px-2 py-0.5 rounded-md bg-amber-500/15 text-amber-600 dark:text-amber-400 hover:bg-amber-500/30 transition-colors font-mono font-medium cursor-pointer"
+                >
+                  +1h
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    updateTask(task.id, {
+                      timeSpentSeconds: 0,
+                      inProgressStartedAt: new Date().toISOString(),
+                    });
+                    toast.info('Timer reset to 00:00');
+                  }}
+                  className="ml-auto text-zinc-500 hover:text-zinc-300 text-[10px] cursor-pointer"
+                >
+                  Reset
+                </button>
+              </div>
             </div>
 
             {/* Properties Matrix (Status, Priority, Due Date) */}
