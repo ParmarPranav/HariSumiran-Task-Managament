@@ -122,9 +122,9 @@ export function GoogleAuthenticatorGate() {
         {/* Workspace Brand & Shield Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="relative mb-4">
-            <div className="absolute inset-0 rounded-2xl bg-blue-500/20 blur-lg animate-pulse" />
-            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-zinc-700/60 text-white shadow-xl">
-              <Smartphone className="h-7 w-7 text-blue-400" />
+            <div className="absolute inset-0 rounded-2xl bg-amber-500/20 blur-xl animate-pulse" />
+            <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-b from-zinc-800 to-zinc-900 border border-zinc-700/60 p-2 shadow-2xl overflow-hidden">
+              <img src="/logo.png" alt="HariSumiran Logo" className="h-full w-full object-contain" />
               <div className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[10px] text-zinc-950 font-black shadow-md border-2 border-zinc-900">
                 ✓
               </div>

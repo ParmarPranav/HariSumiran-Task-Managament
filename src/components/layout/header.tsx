@@ -28,15 +28,20 @@ export function Header() {
 
   return (
     <header className="border-b border-border/60 bg-background/85 backdrop-blur-xl sticky top-0 z-20 shrink-0 select-none">
-      {/* Top Header Row: Left (Title) & Right (Deadline Timer) */}
+      {/* Top Header Row: Left (Title with Logo) & Right (Deadline Timer) */}
       <div className="flex flex-wrap items-center justify-between gap-4 px-6 pt-3.5 pb-2">
-        <div className="space-y-0.5">
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-            HariSumiran
-          </h1>
-          <p className="text-xs text-muted-foreground">
-            Production workspace & sprint tracker
-          </p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-900/90 dark:bg-zinc-800/90 border border-zinc-700/50 p-1 shadow-xs shrink-0 overflow-hidden">
+            <img src="/logo.png" alt="HariSumiran Logo" className="h-full w-full object-contain" />
+          </div>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground leading-none">
+              HariSumiran
+            </h1>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Production workspace & sprint tracker
+            </p>
+          </div>
         </div>
 
         {/* Live Deadline Countdown Timer on the Right Side */}

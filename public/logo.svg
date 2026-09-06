@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" fill="none">
+  <!-- Central Main Shikhar (Gold) -->
+  <path d="M200 10 C215 35 220 50 200 70 C180 50 185 35 200 10 Z" fill="#e0b477" />
+  <path d="M200 40 C230 65 245 95 200 135 C155 95 170 65 200 40" stroke="#e0b477" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M200 80 C250 115 270 160 200 220 C130 160 150 115 200 80" stroke="#e0b477" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+  <!-- Left Shikhar (Slate Blue) -->
+  <path d="M80 80 C92 98 96 110 80 125 C64 110 68 98 80 80 Z" fill="#66809e" />
+  <path d="M80 100 C105 120 115 145 75 180 C35 145 45 120 80 100" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M80 130 C120 160 130 205 60 270 C10 215 35 160 80 130" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+  <!-- Right Shikhar (Slate Blue) -->
+  <path d="M320 80 C332 98 336 110 320 125 C304 110 308 98 320 80 Z" fill="#66809e" />
+  <path d="M320 100 C345 120 355 145 315 180 C275 145 285 120 320 100" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M320 130 C360 160 370 205 300 270 C250 215 275 160 320 130" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+  <!-- Center Lotus Emblem -->
+  <!-- Top Central Petal (Slate Blue) -->
+  <path d="M200 130 C225 160 235 190 200 230 C165 190 175 160 200 130 Z" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <circle cx="200" cy="180" r="10" stroke="#66809e" stroke-width="5" fill="none"/>
+
+  <!-- Gold Side Petals -->
+  <path d="M200 190 C250 170 295 190 320 230 C270 250 230 230 200 190 Z" stroke="#e0b477" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <circle cx="265" cy="215" r="10" stroke="#e0b477" stroke-width="5" fill="none"/>
+
+  <path d="M200 190 C150 170 105 190 80 230 C130 250 170 230 200 190 Z" stroke="#e0b477" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <circle cx="135" cy="215" r="10" stroke="#e0b477" stroke-width="5" fill="none"/>
+
+  <!-- Lower Slate Blue Petals -->
+  <path d="M200 250 C260 270 320 300 360 325 C290 345 230 325 200 250 Z" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <circle cx="275" cy="305" r="10" stroke="#66809e" stroke-width="5" fill="none"/>
+
+  <path d="M200 250 C140 270 80 300 40 325 C110 345 170 325 200 250 Z" stroke="#66809e" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <circle cx="125" cy="305" r="10" stroke="#66809e" stroke-width="5" fill="none"/>
+
+  <!-- Central Ring -->
+  <circle cx="200" cy="270" r="28" stroke="#66809e" stroke-width="9" fill="none"/>
+</svg>

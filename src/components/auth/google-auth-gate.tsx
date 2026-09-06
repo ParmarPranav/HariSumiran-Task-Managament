@@ -52,8 +52,8 @@ export function GoogleAuthGate() {
       >
         {/* Workspace Brand Logo */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-zinc-950 shadow-lg mb-3">
-            <Layers className="h-6 w-6" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-700/60 p-2 shadow-xl mb-3 overflow-hidden">
+            <img src="/logo.png" alt="HariSumiran Logo" className="h-full w-full object-contain" />
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-white font-sans">HariSumiran</h2>
           <p className="text-xs text-zinc-400 mt-1 max-w-[280px]">

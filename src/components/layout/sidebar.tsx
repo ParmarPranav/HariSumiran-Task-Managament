@@ -75,11 +75,11 @@ export function Sidebar() {
       {/* Workspace Logo Header */}
       <div className="flex items-center justify-between h-14 px-3.5 border-b border-border/60">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-2xs font-semibold shrink-0">
-            <Layers className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-900/90 dark:bg-zinc-800/90 border border-zinc-700/50 p-1 shadow-2xs shrink-0 overflow-hidden">
+            <img src="/logo.png" alt="HariSumiran Logo" className="h-full w-full object-contain" />
           </div>
           {!sidebarCollapsed && (
-            <span className="text-xs font-bold tracking-tight text-foreground truncate font-sans">
+            <span className="text-sm font-bold tracking-tight text-foreground truncate font-sans">
               HariSumiran
             </span>
           )}
